@@ -54,7 +54,7 @@ void GPIO_DeInit(GPIO_RegDef_t *pGPIOx)
  */
 uint8_t GPIO_ReadFromInputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber) /* return uint8_t because return is 1 or 0 / SET or RESET */
 {
-	return 0;
+	return 1;
 }
 uint16_t GPIO_ReadFromInputPort(GPIO_RegDef_t *pGPIOx) /* uint16_t because we have 16 pins */
 {
