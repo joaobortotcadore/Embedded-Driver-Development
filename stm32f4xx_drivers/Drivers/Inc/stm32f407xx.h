@@ -39,6 +39,8 @@
 #define GPIOG_BASE              (AHB1PERIPH_BASE + 0x1800)
 #define GPIOH_BASE              (AHB1PERIPH_BASE + 0x1C00)
 #define GPIOI_BASE              (AHB1PERIPH_BASE + 0x2000)
+#define GPIOJ_BASE              (AHB1PERIPH_BASE + 0x2400)
+#define GPIOK_BASE              (AHB1PERIPH_BASE + 0x2800)
 #define RCC_BASE                (AHB1PERIPH_BASE + 0x3800)
 
 /* Base addresses of peripherals which are hanging on APB1 bus */
@@ -131,6 +133,8 @@ typedef struct
 #define GPIOG (GPIO_RegDef_t*)GPIOG_BASE
 #define GPIOH (GPIO_RegDef_t*)GPIOH_BASE
 #define GPIOI (GPIO_RegDef_t*)GPIOI_BASE
+#define GPIOJ (GPIO_RegDef_t*)GPIOJ_BASE
+#define GPIOK (GPIO_RegDef_t*)GPIOK_BASE
 
 #define RCC ((RCC_RegDef_t*)RCC_BASEADDR)
 
