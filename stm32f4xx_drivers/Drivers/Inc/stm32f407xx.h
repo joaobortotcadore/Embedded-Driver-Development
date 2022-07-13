@@ -136,7 +136,7 @@ typedef struct
 #define GPIOJ (GPIO_RegDef_t*)GPIOJ_BASE
 #define GPIOK (GPIO_RegDef_t*)GPIOK_BASE
 
-#define RCC ((RCC_RegDef_t*)RCC_BASEADDR)
+#define RCC ((RCC_RegDef_t*)RCC_BASE)
 
 /* Clock Enable Macros for GPIOx peripherals */
 #define GPIOA_PCLK_EN()     ( RCC->AHB1ENR |= (1 << 0) )

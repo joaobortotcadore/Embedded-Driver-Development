@@ -55,7 +55,7 @@ void GPIO_PeriClockControl(GPIO_RegDef_t *pGPIOx, uint8_t EnOrDi)
         }
         else if(pGPIOx == GPIOI)
         {
-            GPIOI_PCLK_EN()();
+            GPIOI_PCLK_EN();
         }
         else if(pGPIOx == GPIOJ)
         {
@@ -102,7 +102,7 @@ void GPIO_PeriClockControl(GPIO_RegDef_t *pGPIOx, uint8_t EnOrDi)
         }
         else if(pGPIOx == GPIOI)
         {
-            GPIOI_PCLK_DI()();
+            GPIOI_PCLK_DI();
         }
         else if(pGPIOx == GPIOJ)
         {
@@ -128,7 +128,15 @@ void GPIO_PeriClockControl(GPIO_RegDef_t *pGPIOx, uint8_t EnOrDi)
  */
 void GPIO_Init(GPIO_Handle_t *pGPIOHandle)
 {
+    //1.configure the mode of gpio pin
 
+    //2.configure the speed
+
+    //3.configure the pupd settings
+
+    //4.configure the optype
+
+    //5.configure the alternate function
 }
 /**
  * @fn void GPIO_DeInit(GPIO_Handle_t*)
