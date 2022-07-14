@@ -128,15 +128,49 @@ void GPIO_PeriClockControl(GPIO_RegDef_t *pGPIOx, uint8_t EnOrDi)
  */
 void GPIO_Init(GPIO_Handle_t *pGPIOHandle)
 {
+	uint32_t temp=0; //temp register
     //1.configure the mode of gpio pin
+	if(pGPIOHandle->GPIO_PinConfig.GPIO_PinMode <= GPIO_MODE_ANALOG)
+	{
+		temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinMode << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber)); // 2* is because need 2 bits to configure MODERx
+		pGPIOHandle->pGPIOx->MODER &= ~(0x3 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); //before SET any bit field, we need ensure it is cleared. 0x3 = 0b11
+		pGPIOHandle->pGPIOx->MODER |= temp;
+	}else
+	{
+		//@todo for interrupt mode
+	}
+
 
     //2.configure the speed
+	temp = 0;//reset temp
+	temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinSpeed << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber)); // 2* is because need 2 bits to configure OSPEEDR
+	pGPIOHandle->pGPIOx->OSPEEDR &= ~(0x3 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); //before SET any bit field, we need ensure it is cleared. 0x3 = 0b11
+	pGPIOHandle->pGPIOx->OSPEEDR |= temp;
+
 
     //3.configure the pupd settings
+	temp = 0;//reset temp
+	temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinPuPdControl << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber)); // 2* is because need 2 bits to configure PUPDR
+	pGPIOHandle->pGPIOx->PUPDR &= ~(0x3 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); //before SET any bit field, we need ensure it is cleared. 0x3 = 0b11
+	pGPIOHandle->pGPIOx->PUPDR |= temp;
 
     //4.configure the optype
+	temp = 0;//reset temp
+	temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinOPType << (1 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber)); // 1* is because need single bit to configure OTYPER
+	pGPIOHandle->pGPIOx->OTYPER &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); //before SET any bit field, we need ensure it is cleared. 0x1 = 0b1
+	pGPIOHandle->pGPIOx->OTYPER |= temp;
 
     //5.configure the alternate function
+	temp = 0;//reset temp
+	if(pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_ALTFN)
+	{
+		/* AFR is Low and High (check in 8.4.9, 8.4.10)  */
+		uint8_t temp1,temp2;
+		temp1 = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber / 8; //indicates whether it will fall, if into the Low(AFR[0]) or into the High(AFR[1])
+		temp2 = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber % 8; //indicates whether it is from Low(0..7) or High((0..7)+8->(8..15))
+		pGPIOHandle->pGPIOx->AFR[temp1] &= ~(0xF << (4 * temp2)); //before SET any bit field, we need ensure it is cleared. 0x1 = 0b1
+		pGPIOHandle->pGPIOx->AFR[temp1] |= (pGPIOHandle->GPIO_PinConfig.GPIO_PinAltFunMode << (4 * temp2)); // 4* is because need 4 bits to configure AFR(L/H)
+	}
 }
 /**
  * @fn void GPIO_DeInit(GPIO_Handle_t*)
