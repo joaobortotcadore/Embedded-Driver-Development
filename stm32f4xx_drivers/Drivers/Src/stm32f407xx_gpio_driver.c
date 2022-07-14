@@ -140,7 +140,6 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle)
 		//@todo for interrupt mode
 	}
 
-
     //2.configure the speed
 	temp = 0;//reset temp
 	temp = (pGPIOHandle->GPIO_PinConfig.GPIO_PinSpeed << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber)); // 2* is because need 2 bits to configure OSPEEDR
@@ -181,7 +180,50 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle)
  */
 void GPIO_DeInit(GPIO_RegDef_t *pGPIOx)
 {
-
+	if(pGPIOx == GPIOA)
+	{
+		GPIOA_REG_RESET();
+	}
+	else if(pGPIOx == GPIOB)
+	{
+		GPIOB_REG_RESET();
+	}
+	else if(pGPIOx == GPIOC)
+	{
+		GPIOC_REG_RESET();
+	}
+	else if(pGPIOx == GPIOD)
+	{
+		GPIOD_REG_RESET();
+	}
+	else if(pGPIOx == GPIOE)
+	{
+		GPIOE_REG_RESET();
+	}
+	else if(pGPIOx == GPIOF)
+	{
+		GPIOF_REG_RESET();
+	}
+	else if(pGPIOx == GPIOG)
+	{
+		GPIOG_REG_RESET();
+	}
+	else if(pGPIOx == GPIOH)
+	{
+		GPIOH_REG_RESET();
+	}
+	else if(pGPIOx == GPIOI)
+	{
+		GPIOI_REG_RESET();
+	}
+	else if(pGPIOx == GPIOJ)
+	{
+		GPIOJ_REG_RESET();
+	}
+	else if(pGPIOx == GPIOK)
+	{
+		GPIOK_REG_RESET();
+	}
 }
 
 /*
