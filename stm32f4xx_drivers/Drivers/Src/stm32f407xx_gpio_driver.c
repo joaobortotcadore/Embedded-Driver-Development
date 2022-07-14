@@ -226,24 +226,64 @@ void GPIO_DeInit(GPIO_RegDef_t *pGPIOx)
 	}
 }
 
-/*
- * Data read/write
+/**
+ * @fn uint8_t GPIO_ReadFromInputPin(GPIO_RegDef_t*, uint8_t)
+ * @brief Data read
+ * @param pGPIOx
+ * @param PinNumber
+ * @return 0 or 1
  */
 uint8_t GPIO_ReadFromInputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber) /* return uint8_t because return is 1 or 0 / SET or RESET */
 {
-	return 1;
+	uint8_t value;
+	value = (uint8_t)((pGPIOx->IDR >> PinNumber) & 0x00000001);
+	return value;
 }
+/**
+ * @fn uint16_t GPIO_ReadFromInputPort(GPIO_RegDef_t*)
+ * @brief Return all pins of selected GPIOx, x={A,B,C,D,E,F,G,H,I,J}
+ * @param pGPIOx
+ * @return 16 bits each bit represents a GPIOx port pin
+ */
 uint16_t GPIO_ReadFromInputPort(GPIO_RegDef_t *pGPIOx) /* uint16_t because we have 16 pins */
 {
-	return 0;
+    uint16_t value;
+    value = (uint16_t)pGPIOx->IDR;
+    return value;
 }
+
+/**
+ * @fn void GPIO_WriteToOutputPin(GPIO_RegDef_t*, uint8_t, uint8_t)
+ * @brief This function write direct to the OutputDataRegister(ODR) at the
+ * bitfield corresponding to the pin number
+
+ * @param pGPIOx
+ * @param PinNumber
+ * @param Value: can be SET or RESET (1 or 0)
+ */
 void GPIO_WriteToOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber, uint8_t Value) /* Value is SET or RESET */
 {
-
+    if(Value == GPIO_PIN_SET)
+    {
+        pGPIOx->ODR |= (1 << PinNumber);
+    }
+    else
+    {
+        pGPIOx->ODR &= ~(1 << PinNumber);
+    }
 }
+
+/**
+ * @fn void GPIO_WriteToOutputPort(GPIO_RegDef_t*, uint16_t)
+ * @brief Copy Value to the OutputDataRegister(ODR), this function changes all
+ * pins of a specific port at once
+ *
+ * @param pGPIOx
+ * @param Value
+ */
 void GPIO_WriteToOutputPort(GPIO_RegDef_t *pGPIOx, uint16_t Value)
 {
-
+    pGPIOx->ODR = Value;
 }
 void GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
 {
