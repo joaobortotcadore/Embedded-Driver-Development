@@ -137,7 +137,33 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle)
 		pGPIOHandle->pGPIOx->MODER |= temp;
 	}else
 	{
-		//@todo for interrupt mode
+		//@todo for interrupt mode. Lesson 108,109
+		if(pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_IT_FT)
+		{
+			//1. configure the FTSR (falling trigger selection register)
+			EXTI->FTSR |= (1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+			//Clear the corresponding RTSR bit
+			EXTI->RTSR &= ~(1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+		}
+		else if(pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_IT_RT)
+		{
+			//1. configure the RTSR
+			EXTI->RTSR |= (1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+			//Clear the corresponding FTSR bit
+			EXTI->FTSR &= ~(1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+		}
+		else if(pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_IT_RFT)
+		{
+			//1. configure both FTSR and RTSR
+			EXTI->RTSR |= (1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+			//Clear the corresponding FTSR bit
+			EXTI->FTSR |= (1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+		}
+
+		//2. configure the GPIO port selection in SYSCFG_EXTICR (EXTICR EXTernal Interrupt Control Register)
+
+		//3. enable the exti interrupt delivery using IMR (Interrupt Mask Register)
+		EXTI->IMR |= (1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
 	}
 
     //2.configure the speed

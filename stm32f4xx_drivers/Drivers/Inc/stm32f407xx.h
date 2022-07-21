@@ -61,7 +61,7 @@
 #define SPI1_BASE              (APB2PERIPH_BASE + 0x3000)
 #define USART1_BASE            (APB2PERIPH_BASE + 0x1000)
 #define USART6_BASE            (APB2PERIPH_BASE + 0x1400)
-#define EXT1_BASE              (APB2PERIPH_BASE + 0x3C00)
+#define EXTI_BASE              (APB2PERIPH_BASE + 0x3C00)
 #define SYSCFG_BASE            (APB2PERIPH_BASE + 0x3800)
 
 /**************peripheral register definition structures**************/
@@ -84,6 +84,10 @@ typedef struct
     __vo uint32_t AFR[2];    /*!< GPIO alternate function <low register[0] / high register[1]>     Address offset: L-0x20 / H-0x24*/
 }GPIO_RegDef_t;
 
+/**
+ * @struct RCC_RegDef_t
+ * @brief peripheral register definition structure for RCC
+ */
 typedef struct
 {
     __vo uint32_t CR;
@@ -122,6 +126,22 @@ typedef struct
     __vo uint32_t DCKCFGR2;
 }RCC_RegDef_t;
 
+/**
+ * @struct EXTI_RegDef_t
+ * @brief peripheral register definition structure for EXTI.
+ * Section 28, lesson 109
+ */
+typedef struct
+{
+	__vo uint32_t IMR;      /*!< GPIO port mode register     Address offset: 0x00*/
+	__vo uint32_t EMR;    /*!< GPIO port output type register     Address offset: 0x04*/
+	__vo uint32_t RTSR;   /*!< GPIO port output speed register     Address offset: 0x08*/
+    __vo uint32_t FTSR;     /*!< GPIO port pull-up/pull-down register     Address offset: 0x0C*/
+    __vo uint32_t SWIER;       /*!< GPIO port input data register     Address offset: 0x10*/
+    __vo uint32_t PR;       /*!< GPIO port output data register     Address offset: 0x14*/
+}EXTI_RegDef_t;
+
+
 /* peripheral definitions (peripheral base addresses typecasted to xxx_RegDef_t) */
 
 #define GPIOA (GPIO_RegDef_t*)GPIOA_BASE
@@ -136,7 +156,9 @@ typedef struct
 #define GPIOJ (GPIO_RegDef_t*)GPIOJ_BASE
 #define GPIOK (GPIO_RegDef_t*)GPIOK_BASE
 
-#define RCC ((RCC_RegDef_t*)RCC_BASE)
+#define RCC 	((RCC_RegDef_t*)RCC_BASE)
+
+#define EXTI 	((EXTI_RegDef_t*)EXTI_BASE) //Section 28, lesson 109
 
 /* Clock Enable Macros for GPIOx peripherals */
 #define GPIOA_PCLK_EN()     ( RCC->AHB1ENR |= (1 << 0) )
