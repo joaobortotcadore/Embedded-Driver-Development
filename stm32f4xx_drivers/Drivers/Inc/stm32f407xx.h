@@ -23,7 +23,7 @@
 #define NVIC_ISER2		( (__vo uint32_t*)0xE000E108 )
 #define NVIC_ISER3		( (__vo uint32_t*)0xE000E10C )
 
-/* ARM Cortex Mx Processor NVIC ISERx register Addresses */
+/* ARM Cortex Mx Processor NVIC ICERx register Addresses */
 #define NVIC_ICER0		( (__vo uint32_t*)0xE000E180 )
 #define NVIC_ICER1		( (__vo uint32_t*)0xE000E184 )
 #define NVIC_ICER2		( (__vo uint32_t*)0xE000E188 )
