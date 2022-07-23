@@ -145,6 +145,20 @@ typedef struct
  * @struct SYSCFG_RegDef_t
  * @brief peripheral register definition structure for SYSCFG.
  * Section 28, lesson 110
+ * Use temp1 to identify which register is the EXTICR[temp1] pin
+ * Use temp2 to identify the position of the EXTIx pins
+ * SYSCFG_EXTICR1: EXTICR[0] = 0..3
+ * SYSCFG_EXTICR2: EXTICR[1] = 4..7
+ * SYSCFG_EXTICR3: EXTICR[2] = 8..11
+ * SYSCFG_EXTICR4: EXTICR[3] = 12..15
+ *
+ * Example: PA5. Port A code is 0000
+ * temp1 = 5/4 = 1 -> EXTICR[1]
+ * temp2 = 5%4 = 1 -> 1*4 (shift by 4 because EXTIx use blocks of 4 bits). So in EXTI5 we must have 0000 assigned
+ *
+ * Example: PC13. Port C code is 0010
+ * temp1 = 13/4 = 3 -> EXTICR[3]
+ * temp2 = 13%4 = 1 -> 1*4 (shift by 4 because EXTIx use blocks of 4 bits). So in EXTI13 we must have 0010 assigned
  */
 typedef struct
 {
@@ -176,6 +190,8 @@ typedef struct
 #define RCC 	((RCC_RegDef_t*)RCC_BASE)
 
 #define EXTI 	((EXTI_RegDef_t*)EXTI_BASE) //Section 28, lesson 109
+
+#define SYSCFG	((SYSCFG_RegDef_t*)SYSCFG_BASE) //Section 28, lesson 111
 
 /* Clock Enable Macros for GPIOx peripherals */
 #define GPIOA_PCLK_EN()     ( RCC->AHB1ENR |= (1 << 0) )
@@ -260,6 +276,23 @@ typedef struct
 #define GPIOI_REG_RESET() 		do{(RCC->AHB1RSTR |= (1 << 8)); 	(RCC->AHB1RSTR &= ~(1 << 8));}while(0)
 #define GPIOJ_REG_RESET() 		do{(RCC->AHB1RSTR |= (1 << 9)); 	(RCC->AHB1RSTR &= ~(1 << 9));}while(0)
 #define GPIOK_REG_RESET() 		do{(RCC->AHB1RSTR |= (1 << 10)); 	(RCC->AHB1RSTR &= ~(1 << 10));}while(0)
+
+/**
+ * @def GPIO_BASEADDR_TO_CODE
+ * @param x
+ * @brief returns port code for given GPIOx base address
+ */
+#define GPIO_BASEADDR_TO_CODE(x)	   ((x == GPIOA) ? 0 :\
+										(x == GPIOB) ? 1 :\
+										(x == GPIOC) ? 2 :\
+										(x == GPIOD) ? 3 :\
+										(x == GPIOE) ? 4 :\
+										(x == GPIOF) ? 5 :\
+										(x == GPIOG) ? 6 :\
+										(x == GPIOH) ? 7 :\
+										(x == GPIOI) ? 8 :\
+										(x == GPIOJ) ? 9 :\
+										(x == GPIOK) ? 10 :0 )
 
 /* Generic MACROS */
 #define ENABLE 			1
