@@ -141,6 +141,23 @@ typedef struct
     __vo uint32_t PR;       /*!< GPIO port output data register     Address offset: 0x14*/
 }EXTI_RegDef_t;
 
+/**
+ * @struct SYSCFG_RegDef_t
+ * @brief peripheral register definition structure for SYSCFG.
+ * Section 28, lesson 110
+ */
+typedef struct
+{
+	__vo uint32_t MEMRMP;      		/*!< Used for specific configurations on memory remap		Address offset: 0x00*/
+	__vo uint32_t PMC;    			/*!< Peripheral mode configuration register    				Address offset: 0x04*/
+	__vo uint32_t EXTICR[4];  		/*!< External interrupt configuration register    			Address offset: 0x08-0x0C-0x10-0x14*/
+    uint32_t RESERVED1[2];     		/*!< (???)												    Reserved: 0x18-0x1C*/
+    __vo uint32_t CMPCR;       		/*!< Compensation cell control register      				Address offset: 0x2C*/
+    uint32_t RESERVED2[2];     		/*!< (???)    												Reserved: 0x24-0x28*/
+    __vo uint32_t CFGR;       		/*!< (???)   												Address offset: 0x2C*/
+}SYSCFG_RegDef_t;
+
+
 
 /* peripheral definitions (peripheral base addresses typecasted to xxx_RegDef_t) */
 
