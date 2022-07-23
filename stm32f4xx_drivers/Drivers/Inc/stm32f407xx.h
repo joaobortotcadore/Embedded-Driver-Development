@@ -15,6 +15,21 @@
  * usually applied to a variable when we are declaring it. */
 #define __vo volatile
 
+/****************** START: Processor Specific Details *******************/
+
+/* ARM Cortex Mx Processor NVIC ISERx register Addresses */
+#define NVIC_ISER0		( (__vo uint32_t*)0xE000E100 )
+#define NVIC_ISER1		( (__vo uint32_t*)0xE000E104 )
+#define NVIC_ISER2		( (__vo uint32_t*)0xE000E108 )
+#define NVIC_ISER3		( (__vo uint32_t*)0xE000E10C )
+
+/* ARM Cortex Mx Processor NVIC ISERx register Addresses */
+#define NVIC_ICER0		( (__vo uint32_t*)0xE000E180 )
+#define NVIC_ICER1		( (__vo uint32_t*)0xE000E184 )
+#define NVIC_ICER2		( (__vo uint32_t*)0xE000E188 )
+#define NVIC_ICER3		( (__vo uint32_t*)0xE000E18C )
+
+
 /* Base address if FLASH and SRAM memories */
 #define FLASH_BASE              0x08000000U
 #define SRAM1_BASE              0x20000000U //112KB => 112*1024 = 114688 <==> 1C000
@@ -278,7 +293,7 @@ typedef struct
 #define GPIOK_REG_RESET() 		do{(RCC->AHB1RSTR |= (1 << 10)); 	(RCC->AHB1RSTR &= ~(1 << 10));}while(0)
 
 /**
- * @def GPIO_BASEADDR_TO_CODE
+ * @def GPIO_BASEADDR_TO_CODE()
  * @param x
  * @brief returns port code for given GPIOx base address
  */
@@ -293,6 +308,17 @@ typedef struct
 										(x == GPIOI) ? 8 :\
 										(x == GPIOJ) ? 9 :\
 										(x == GPIOK) ? 10 :0 )
+
+/* IRQ (Interrupt ReQuest) Numbers of STM32F407x MCU
+ * NOTE: update these macros with valid values according to your MCU
+ * TODO: complete this list for others peripherals - page 372 RM - Table 61. Vector table for STM32F405xx/07xx and STM32F415xx/17xx */
+#define IRQ_NO_EXTI0		6
+#define IRQ_NO_EXTI1		7
+#define IRQ_NO_EXTI2		8
+#define IRQ_NO_EXTI3		9
+#define IRQ_NO_EXTI4		10
+#define IRQ_NO_EXTI9_5		23
+#define IRQ_NO_EXTI15_10	40
 
 /* Generic MACROS */
 #define ENABLE 			1

@@ -327,12 +327,53 @@ void GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
     pGPIOx->ODR ^= (1 << PinNumber);
 }
 
-/*
- * IRQ Configuration and ISR handling | IRQ - Interrupt ReQuest, ISR - Interrupt Status Register
+/**
+ * @fn void GPIO_IRQConfig(uint8_t, uint8_t, uint8_t)
+ * @brief IRQ Configuration and ISR handling | IRQ - Interrupt ReQuest, ISR - Interrupt Status Register
+ *
+ * @param IRQNumber
+ * @param IRQPriority
+ * @param EnOrDi - 0 has no effect, 1 to enable interrupt
+ *
+ * @note https://documentation-service.arm.com/static/5f2ac76d60a93e65927bbdc5?token=
+ * In Table 4-2 NVIC register summary we need check:
+ * ->Interrupt Set-enable Registers on page 4-4
+ * ->Interrupt Clear-enable Registers on page 4-5
+ * ->Interrupt Priority Registers on page 4-7
  */
 void GPIO_IRQConfig(uint8_t IRQNumber, uint8_t IRQPriority, uint8_t EnOrDi) //to enable it, to set priority, etc
 {
-
+	if(EnOrDi == ENABLE)
+	{
+		if(IRQNumber <= 31)
+		{
+			//program ISER0 register - ISER (Interrupt Set-Enable Registers)
+			*NVIC_ISER0 |= ( 1 << IRQNumber );
+		}else if(IRQNumber > 31 && IRQNumber < 64)
+		{
+			//program ISER1 register
+			*NVIC_ISER1 |= ( 1 << (IRQNumber % 32) );
+		}else if(IRQNumber >= 64 && IRQNumber <96)
+		{
+			//program ISER2 register
+			*NVIC_ISER2 |= ( 1 << (IRQNumber % 64) );
+		}
+	}else
+	{
+		if(IRQNumber <= 31)
+		{
+			//program ICER0 register - ICER (Interrupt Clear-Enable Registers)
+			*NVIC_ICER0 |= ( 1 << IRQNumber );
+		}else if(IRQNumber > 31 && IRQNumber < 64)
+		{
+			//program ICER1 register
+			*NVIC_ICER1 |= ( 1 << (IRQNumber % 32) );
+		}else if(IRQNumber >= 64 && IRQNumber <96)
+		{
+			//program ICER2 register
+			*NVIC_ICER2 |= ( 1 << (IRQNumber % 64) );
+		}
+	}
 }
 void GPIO_IRQHandling(uint8_t PinNumber) //when an interrupt occurs, this function is responsible to process
 {
