@@ -15,6 +15,25 @@
  * usually applied to a variable when we are declaring it. */
 #define __vo volatile
 
+/****************** START: Processor Specific Details *******************/
+
+/* ARM Cortex Mx Processor NVIC ISERx register Addresses */
+#define NVIC_ISER0		( (__vo uint32_t*)0xE000E100 )
+#define NVIC_ISER1		( (__vo uint32_t*)0xE000E104 )
+#define NVIC_ISER2		( (__vo uint32_t*)0xE000E108 )
+#define NVIC_ISER3		( (__vo uint32_t*)0xE000E10C )
+
+/* ARM Cortex Mx Processor NVIC ICERx register Addresses */
+#define NVIC_ICER0		( (__vo uint32_t*)0xE000E180 )
+#define NVIC_ICER1		( (__vo uint32_t*)0xE000E184 )
+#define NVIC_ICER2		( (__vo uint32_t*)0xE000E188 )
+#define NVIC_ICER3		( (__vo uint32_t*)0xE000E18C )
+
+/* ARM Cortex Mx Processor Priority Register Address Calculation */
+#define NVIC_PR_BASE_ADDR   ( (__vo uint32_t*)0xE000e400 )
+
+#define NO_PR_BITS_IMPLEMENTED  4
+
 /* Base address if FLASH and SRAM memories */
 #define FLASH_BASE              0x08000000U
 #define SRAM1_BASE              0x20000000U //112KB => 112*1024 = 114688 <==> 1C000
@@ -61,7 +80,7 @@
 #define SPI1_BASE              (APB2PERIPH_BASE + 0x3000)
 #define USART1_BASE            (APB2PERIPH_BASE + 0x1000)
 #define USART6_BASE            (APB2PERIPH_BASE + 0x1400)
-#define EXT1_BASE              (APB2PERIPH_BASE + 0x3C00)
+#define EXTI_BASE              (APB2PERIPH_BASE + 0x3C00)
 #define SYSCFG_BASE            (APB2PERIPH_BASE + 0x3800)
 
 /**************peripheral register definition structures**************/
@@ -84,6 +103,10 @@ typedef struct
     __vo uint32_t AFR[2];    /*!< GPIO alternate function <low register[0] / high register[1]>     Address offset: L-0x20 / H-0x24*/
 }GPIO_RegDef_t;
 
+/**
+ * @struct RCC_RegDef_t
+ * @brief peripheral register definition structure for RCC
+ */
 typedef struct
 {
     __vo uint32_t CR;
@@ -122,6 +145,53 @@ typedef struct
     __vo uint32_t DCKCFGR2;
 }RCC_RegDef_t;
 
+/**
+ * @struct EXTI_RegDef_t
+ * @brief peripheral register definition structure for EXTI.
+ * Section 28, lesson 109
+ */
+typedef struct
+{
+	__vo uint32_t IMR;      /*!< GPIO port mode register     Address offset: 0x00*/
+	__vo uint32_t EMR;    /*!< GPIO port output type register     Address offset: 0x04*/
+	__vo uint32_t RTSR;   /*!< GPIO port output speed register     Address offset: 0x08*/
+    __vo uint32_t FTSR;     /*!< GPIO port pull-up/pull-down register     Address offset: 0x0C*/
+    __vo uint32_t SWIER;       /*!< GPIO port input data register     Address offset: 0x10*/
+    __vo uint32_t PR;       /*!< GPIO port output data register     Address offset: 0x14*/
+}EXTI_RegDef_t;
+
+/**
+ * @struct SYSCFG_RegDef_t
+ * @brief peripheral register definition structure for SYSCFG.
+ * Section 28, lesson 110
+ * Use temp1 to identify which register is the EXTICR[temp1] pin
+ * Use temp2 to identify the position of the EXTIx pins
+ * SYSCFG_EXTICR1: EXTICR[0] = 0..3
+ * SYSCFG_EXTICR2: EXTICR[1] = 4..7
+ * SYSCFG_EXTICR3: EXTICR[2] = 8..11
+ * SYSCFG_EXTICR4: EXTICR[3] = 12..15
+ *
+ * Example: PA5. Port A code is 0000
+ * temp1 = 5/4 = 1 -> EXTICR[1]
+ * temp2 = 5%4 = 1 -> 1*4 (shift by 4 because EXTIx use blocks of 4 bits). So in EXTI5 we must have 0000 assigned
+ *
+ * Example: PC13. Port C code is 0010
+ * temp1 = 13/4 = 3 -> EXTICR[3]
+ * temp2 = 13%4 = 1 -> 1*4 (shift by 4 because EXTIx use blocks of 4 bits). So in EXTI13 we must have 0010 assigned
+ */
+typedef struct
+{
+	__vo uint32_t MEMRMP;      		/*!< Used for specific configurations on memory remap		Address offset: 0x00*/
+	__vo uint32_t PMC;    			/*!< Peripheral mode configuration register    				Address offset: 0x04*/
+	__vo uint32_t EXTICR[4];  		/*!< External interrupt configuration register    			Address offset: 0x08-0x0C-0x10-0x14*/
+    uint32_t RESERVED1[2];     		/*!< (???)												    Reserved: 0x18-0x1C*/
+    __vo uint32_t CMPCR;       		/*!< Compensation cell control register      				Address offset: 0x2C*/
+    uint32_t RESERVED2[2];     		/*!< (???)    												Reserved: 0x24-0x28*/
+    __vo uint32_t CFGR;       		/*!< (???)   												Address offset: 0x2C*/
+}SYSCFG_RegDef_t;
+
+
+
 /* peripheral definitions (peripheral base addresses typecasted to xxx_RegDef_t) */
 
 #define GPIOA (GPIO_RegDef_t*)GPIOA_BASE
@@ -136,7 +206,11 @@ typedef struct
 #define GPIOJ (GPIO_RegDef_t*)GPIOJ_BASE
 #define GPIOK (GPIO_RegDef_t*)GPIOK_BASE
 
-#define RCC ((RCC_RegDef_t*)RCC_BASE)
+#define RCC 	((RCC_RegDef_t*)RCC_BASE)
+
+#define EXTI 	((EXTI_RegDef_t*)EXTI_BASE) //Section 28, lesson 109
+
+#define SYSCFG	((SYSCFG_RegDef_t*)SYSCFG_BASE) //Section 28, lesson 111
 
 /* Clock Enable Macros for GPIOx peripherals */
 #define GPIOA_PCLK_EN()     ( RCC->AHB1ENR |= (1 << 0) )
@@ -221,6 +295,34 @@ typedef struct
 #define GPIOI_REG_RESET() 		do{(RCC->AHB1RSTR |= (1 << 8)); 	(RCC->AHB1RSTR &= ~(1 << 8));}while(0)
 #define GPIOJ_REG_RESET() 		do{(RCC->AHB1RSTR |= (1 << 9)); 	(RCC->AHB1RSTR &= ~(1 << 9));}while(0)
 #define GPIOK_REG_RESET() 		do{(RCC->AHB1RSTR |= (1 << 10)); 	(RCC->AHB1RSTR &= ~(1 << 10));}while(0)
+
+/**
+ * @def GPIO_BASEADDR_TO_CODE()
+ * @param x
+ * @brief returns port code for given GPIOx base address
+ */
+#define GPIO_BASEADDR_TO_CODE(x)	   ((x == GPIOA) ? 0 :\
+										(x == GPIOB) ? 1 :\
+										(x == GPIOC) ? 2 :\
+										(x == GPIOD) ? 3 :\
+										(x == GPIOE) ? 4 :\
+										(x == GPIOF) ? 5 :\
+										(x == GPIOG) ? 6 :\
+										(x == GPIOH) ? 7 :\
+										(x == GPIOI) ? 8 :\
+										(x == GPIOJ) ? 9 :\
+										(x == GPIOK) ? 10 :0 )
+
+/* IRQ (Interrupt ReQuest) Numbers of STM32F407x MCU
+ * NOTE: update these macros with valid values according to your MCU
+ * TODO: complete this list for others peripherals - page 372 RM - Table 61. Vector table for STM32F405xx/07xx and STM32F415xx/17xx */
+#define IRQ_NO_EXTI0		6
+#define IRQ_NO_EXTI1		7
+#define IRQ_NO_EXTI2		8
+#define IRQ_NO_EXTI3		9
+#define IRQ_NO_EXTI4		10
+#define IRQ_NO_EXTI9_5		23
+#define IRQ_NO_EXTI15_10	40
 
 /* Generic MACROS */
 #define ENABLE 			1
