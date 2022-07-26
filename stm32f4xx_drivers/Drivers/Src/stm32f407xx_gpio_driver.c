@@ -340,7 +340,7 @@ void GPIO_ToggleOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber)
  * ->Interrupt Clear-enable Registers on page 4-5
  * ->Interrupt Priority Registers on page 4-7
  */
-void GPIO_IRQInterruptConfig(uint8_t IRQNumber, uint8_t EnOrDi) //to enable it, to set priority, etc
+void GPIO_IRQInterruptConfig(uint8_t IRQNumber, uint8_t EnOrDi) //to enable it
 {
 	if(EnOrDi == ENABLE)
 	{
