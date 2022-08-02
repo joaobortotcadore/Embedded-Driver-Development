@@ -103,6 +103,19 @@ typedef struct
     __vo uint32_t AFR[2];    /*!< GPIO alternate function <low register[0] / high register[1]>     Address offset: L-0x20 / H-0x24*/
 }GPIO_RegDef_t;
 
+typedef struct
+{
+    __vo uint32_t CR1;      /*!< SPI control register 1 (not used in I2S mode)      Address offset: 0x00*/
+    __vo uint32_t CR2;      /*!< SPI control register 2                             Address offset: 0x04*/
+    __vo uint32_t SR;       /*!< SPI status register                                Address offset: 0x08*/
+    __vo uint32_t DR;       /*!< SPI data register                                  Address offset: 0x0C*/
+    __vo uint32_t CRCPR;    /*!< SPI CRC polynomial register (not used in I2S mode) Address offset: 0x10*/
+    __vo uint32_t RXCRCR;   /*!< SPI RX CRC register (not used in I2S mode)         Address offset: 0x14*/
+    __vo uint32_t TXCRCR;   /*!< SPI TX CRC register (not used in I2S mode)         Address offset: 0x18*/
+    __vo uint32_t I2SCFGR;  /*!< SPI_I2S configuration register                     Address offset: 0x1C*/
+    __vo uint32_t I2SPR;    /*!< SPI_I2S prescaler register                         Address offset: 0x20*/
+}SPI_RegDef_t;
+
 /**
  * @struct RCC_RegDef_t
  * @brief peripheral register definition structure for RCC
@@ -190,8 +203,6 @@ typedef struct
     __vo uint32_t CFGR;       		/*!< (???)   												Address offset: 0x2C*/
 }SYSCFG_RegDef_t;
 
-
-
 /* peripheral definitions (peripheral base addresses typecasted to xxx_RegDef_t) */
 
 #define GPIOA (GPIO_RegDef_t*)GPIOA_BASE
@@ -211,6 +222,10 @@ typedef struct
 #define EXTI 	((EXTI_RegDef_t*)EXTI_BASE) //Section 28, lesson 109
 
 #define SYSCFG	((SYSCFG_RegDef_t*)SYSCFG_BASE) //Section 28, lesson 111
+
+#define SPI1    ((SPI_RegDef_t*) SPI1_BASE) //section 36, lesson 135
+#define SPI2    ((SPI_RegDef_t*) SPI2_BASE) //section 36, lesson 135
+#define SPI3    ((SPI_RegDef_t*) SPI3_BASE) //section 36, lesson 135
 
 /* Clock Enable Macros for GPIOx peripherals */
 #define GPIOA_PCLK_EN()     ( RCC->AHB1ENR |= (1 << 0) )
@@ -350,5 +365,6 @@ typedef struct
 #define GPIO_PIN_RESET	RESET
 
 #include "stm32f407xx_gpio_driver.h"
+#include "stm32f407xx_spi_driver.h"
 
 #endif /* INC_STM32F407XX_H_ */

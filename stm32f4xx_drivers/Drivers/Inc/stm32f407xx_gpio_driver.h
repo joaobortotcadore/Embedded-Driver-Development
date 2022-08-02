@@ -10,6 +10,7 @@
 
 #include "stm32f407xx.h"
 
+/* Configuration structure for GPIOx peripheral */
 typedef struct
 {
 	uint8_t GPIO_PinNumber; /* possible values from @GPIO_PIN_NUMBERS */
@@ -20,12 +21,11 @@ typedef struct
 	uint8_t GPIO_PinAltFunMode; /* @todo RM0090 8.4.10 */
 }GPIO_PinConfig_t;
 
-
 /* Handle structure for a GPIO pin */
 typedef  struct
 {
-	GPIO_RegDef_t 		*pGPIOx; 				/* This holds the base address of the GPIO port to which the pin belongs */
-	GPIO_PinConfig_t 	GPIO_PinConfig;			/* This holds GPIO pin configuration settings */
+    GPIO_RegDef_t       *pGPIOx;                /* This holds the base address of the GPIO port to which the pin belongs */
+    GPIO_PinConfig_t    GPIO_PinConfig;         /* This holds GPIO pin configuration settings */
 }GPIO_Handle_t;
 
 /* @GPIO_PIN_NUMBERS
@@ -77,7 +77,7 @@ typedef  struct
 
 
 /**************************************
- * APIs supported by this driver
+ *      APIs supported by this driver
  * ************************************/
 /*
  * Peripheral Clock setup
