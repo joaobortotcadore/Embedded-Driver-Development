@@ -73,6 +73,9 @@ void SPI_Init(SPI_Handle_t *pSPIHandle)
 	//first lets configure the SPI_CR1 register
 	uint32_t tempreg = 0;
 
+	//enable the peripheral clock here, because users always forget to enabled it
+	SPI_PeriClockControl(pSPIHandle->pSPIx, ENABLE);
+
 	//1. configure the device mode
 	tempreg |= pSPIHandle->SPIConfig.SPI_DeviceMode << 2;
 
@@ -208,3 +211,38 @@ void SPI_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority);
  * @param pHandle
  */
 void SPI_IRQHandling(SPI_Handle_t *pHandle);
+/**
+ * @fn void SPI_PeripheralControl(SPI_RegDef_t*, uint8_t)
+ * @brief
+ *
+ * @param pSPIx
+ * @param EnOrDi
+ */
+void SPI_PeripheralControl(SPI_RegDef_t *pSPIx, uint8_t EnOrDi)
+{
+	if(EnOrDi == ENABLE)
+	{
+		pSPIx->CR1 |= (1 << SPI_CR1_SPE); //enable peripheral
+	}else
+	{
+		pSPIx->CR1 &= ~(1 << SPI_CR1_SPE); //disable peripheral
+	}
+}
+/**
+ * @fn void SPI_SSIConfig(SPI_RegDef_t*, uint8_t)
+ * @brief
+ *
+ * @param pSPIx
+ * @param EnOrDi
+ * @note Section 40, lesson 150
+ */
+void SPI_SSIConfig(SPI_RegDef_t *pSPIx, uint8_t EnOrDi)
+{
+	if(EnOrDi == ENABLE)
+	{
+		pSPIx->CR1 |= (1 << SPI_CR1_SSI);
+	}else
+	{
+		pSPIx->CR1 &= ~(1 << SPI_CR1_SSI);
+	}
+}
