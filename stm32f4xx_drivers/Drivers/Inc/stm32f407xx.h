@@ -257,7 +257,7 @@ typedef struct
 #define USART3_PCLK_EN()      ( RCC->APB1ENR |= (1 << 18) )
 #define USART4_PCLK_EN()      ( RCC->APB1ENR |= (1 << 19) )
 #define USART5_PCLK_EN()      ( RCC->APB1ENR |= (1 << 20) )
-#define USART6_PCLK_EN()      ( RCC->APB2ENR |= (1 << 5) )
+#define USART6_PCLK_EN()      ( RCC->APB1ENR |= (1 << 5) )
 
 /* Clock Enable Macros for SYSCFG peripheral */
 #define SYSCFG_PCLK_EN()	( RCC->APB2ENR |= (1<<14) )
