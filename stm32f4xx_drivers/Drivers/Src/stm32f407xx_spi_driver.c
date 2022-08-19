@@ -27,7 +27,7 @@ void SPI_PeriClockControl(SPI_RegDef_t *pSPIx, uint8_t EnOrDi)
         }
         else if(pSPIx == SPI2)
         {
-            SPI3_PCLK_EN();
+            SPI2_PCLK_EN();
         }
         else if(pSPIx == SPI3)
         {

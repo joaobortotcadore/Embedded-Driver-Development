@@ -31,7 +31,7 @@ void SPI2_GPIOInits(void)
 	SPIPins.GPIO_PinConfig.GPIO_PinAltFunMode = 5;
 	SPIPins.GPIO_PinConfig.GPIO_PinOPType = GPIO_OP_TYPE_PP;
 	SPIPins.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_NO_PUPD;
-	SPIPins.GPIO_PinConfig.GPIO_PinSpeed = GPIO_SPEED_HIGH;
+	SPIPins.GPIO_PinConfig.GPIO_PinSpeed = GPIO_SPEED_FAST;
 
 	//SCLK
 	SPIPins.GPIO_PinConfig.GPIO_PinNumber = GPIO_PIN_NO_13;
@@ -59,7 +59,7 @@ void SPI2_Inits(void)
 	SPI2Handle.SPIConfig.SPI_DeviceMode = SPI_DEVICE_MODE_MASTER;
 	SPI2Handle.SPIConfig.SPI_SclkSpeed = SPI_SCLK_SPEED_DIV2; //generates sclk of 8MHz
 	SPI2Handle.SPIConfig.SPI_DFF = SPI_DFF_8BITS;
-	SPI2Handle.SPIConfig.SPI_CPOL = SPI_CPOL_HIGH;
+	SPI2Handle.SPIConfig.SPI_CPOL = SPI_CPOL_LOW;
 	SPI2Handle.SPIConfig.SPI_CPHA = SPI_CPHA_LOW;
 	SPI2Handle.SPIConfig.SPI_SSM = SPI_SSM_EN; // software slave management enabled for NSS pin
 
@@ -86,7 +86,7 @@ int main(void)
 	SPI_SendData(SPI2,(uint8_t*)user_data,strlen(user_data));
 
 	//disable the SPI2 peripheral
-	//SPI_PeripheralControl(SPI2, DISABLE);
+	SPI_PeripheralControl(SPI2, DISABLE);
 
 	while(1);
 
