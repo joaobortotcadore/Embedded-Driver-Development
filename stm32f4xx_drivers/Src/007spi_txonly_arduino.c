@@ -1,7 +1,7 @@
 /*
- * 006spi_tx_testing.c
+ * 007spi_tx_testing.c
  *
- *  Created on: 9 de ago de 2022
+ *  Created on: 21 de ago de 2022
  *      Author: joaobortotcadore
  */
 
@@ -40,14 +40,14 @@ void SPI2_GPIOInits(void)
 	//MOSI
 	SPIPins.GPIO_PinConfig.GPIO_PinNumber = GPIO_PIN_NO_15;
 	GPIO_Init(&SPIPins);
-/* because there is no slave we don't use MISO and NSS */
+
 //	//MISO
 //	SPIPins.GPIO_PinConfig.GPIO_PinNumber = GPIO_PIN_NO_14;
 //	GPIO_Init(&SPIPins);
 //
 //	//NSS
-//	SPIPins.GPIO_PinConfig.GPIO_PinNumber = GPIO_PIN_NO_12;
-//	GPIO_Init(&SPIPins);
+	SPIPins.GPIO_PinConfig.GPIO_PinNumber = GPIO_PIN_NO_12;
+	GPIO_Init(&SPIPins);
 }
 
 void SPI2_Inits(void)
@@ -57,11 +57,11 @@ void SPI2_Inits(void)
 	SPI2Handle.pSPIx = SPI2;
 	SPI2Handle.SPIConfig.SPI_BusConfig = SPI_BUS_CONFIG_FD;
 	SPI2Handle.SPIConfig.SPI_DeviceMode = SPI_DEVICE_MODE_MASTER;
-	SPI2Handle.SPIConfig.SPI_SclkSpeed = SPI_SCLK_SPEED_DIV2; //generates sclk of 8MHz
+	SPI2Handle.SPIConfig.SPI_SclkSpeed = SPI_SCLK_SPEED_DIV8; //generates sclk of 2MHz
 	SPI2Handle.SPIConfig.SPI_DFF = SPI_DFF_8BITS;
-	SPI2Handle.SPIConfig.SPI_CPOL = SPI_CPOL_HIGH;
+	SPI2Handle.SPIConfig.SPI_CPOL = SPI_CPOL_LOW;
 	SPI2Handle.SPIConfig.SPI_CPHA = SPI_CPHA_LOW;
-	SPI2Handle.SPIConfig.SPI_SSM = SPI_SSM_EN; // software slave management enabled for NSS pin
+	SPI2Handle.SPIConfig.SPI_SSM = SPI_SSM_DI; // hardware slave management enabled for NSS pin
 
 	SPI_Init(&SPI2Handle);
 }
@@ -76,8 +76,12 @@ int main(void)
 	//initialize the SPI2 peripheral parameters
 	SPI2_Inits();
 
-	//this makes NSS signal internally high and avoids MODF error - only for SSM = enabled
-	SPI_SSIConfig(SPI2, ENABLE);
+	/* making SSOE=1 does NSS output enable
+	 * The NSS pin is automatically managed by the hardware
+	 * When SPE=1, NSS will be pulled to LOW
+	 * When SPE=0, NSS will be pulled to HIGH
+	 * */
+	SPI_SSOEConfig(SPI2, ENABLE);
 
 	//enable the SPI2 peripheral
 	SPI_PeripheralControl(SPI2, ENABLE);
