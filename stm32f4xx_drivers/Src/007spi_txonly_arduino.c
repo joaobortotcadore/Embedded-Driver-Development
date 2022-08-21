@@ -119,8 +119,15 @@ int main(void)
 		//enable the SPI2 peripheral
 		SPI_PeripheralControl(SPI2, ENABLE);
 
+		//to send length information
+		uint8_t dataLen = strlen(user_data);
+		SPI_SendData(SPI2,dataLen,1);
+
 		//to send data
 		SPI_SendData(SPI2,(uint8_t*)user_data,strlen(user_data));
+
+		//confirm first if SPI is not busy
+		while( SPI_GetFlagStatus(SPI2, SPI_BUSY_FLAG) ); //if SPI is busy, macro return 1 and get stuck in the loop
 
 		//disable the SPI2 peripheral
 		SPI_PeripheralControl(SPI2, DISABLE);
