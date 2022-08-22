@@ -1,5 +1,5 @@
 /*
- * 007spi_tx_testing.c
+ * 007spi_txonly_arduino.c
  *
  *  Created on: 21 de ago de 2022
  *      Author: joaobortotcadore
