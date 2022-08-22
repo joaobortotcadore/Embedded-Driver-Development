@@ -181,7 +181,31 @@ void SPI_SendData(SPI_RegDef_t *pSPIx, uint8_t *pTxBuffer, uint32_t Len)
  * @param pRxBuffer
  * @param Len
  */
-void SPI_ReceiveData(SPI_RegDef_t *pSPIx, uint8_t *pRxBuffer, uint32_t Len);
+void SPI_ReceiveData(SPI_RegDef_t *pSPIx, uint8_t *pRxBuffer, uint32_t Len)
+{
+	while(Len > 0)
+	{
+		//1. wait until RXNE is set == 1: Rx buffer is not empty
+		while(SPI_GetFlagStatus(pSPIx,SPI_RXNE_FLAG) == FLAG_RESET); //while( ! (pSPIx->SR & (1 << 1) ) );
+
+		//2. Check the DFF bit in CR1
+		if( (pSPIx->CR1 & (1 << SPI_CR1_DFF) ) )
+		{
+			//16 bit DFF
+			//1. load the data from DR to the RxBuffer
+			*((uint16_t*)pRxBuffer) = pSPIx->DR;
+			Len--;
+			Len--;
+			(uint16_t*)pRxBuffer++;
+		}else
+		{
+			//8 bit DFF
+			*pRxBuffer = pSPIx->DR;
+			Len--;
+			pRxBuffer++;
+		}
+	}
+}
 
 /* IRQ Configuration and ISR handling | IRQ - Interrupt ReQuest, ISR - Interrupt Status Register */
 /**

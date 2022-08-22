@@ -92,7 +92,7 @@ void delay(void)
 
 int main(void)
 {
-	char user_data[] = "Hello world";
+	char user_data[] = "Pipoca dados nesse barramento meu filho, 0123456789 abcdefghijklmn opqrstuvxwyz ";
 
 	//initialize the GPIO pin Button
 	GPIO_ButtonInit();
@@ -121,7 +121,7 @@ int main(void)
 
 		//to send length information
 		uint8_t dataLen = strlen(user_data);
-		SPI_SendData(SPI2,dataLen,1);
+		SPI_SendData(SPI2,&dataLen,1);
 
 		//to send data
 		SPI_SendData(SPI2,(uint8_t*)user_data,strlen(user_data));
