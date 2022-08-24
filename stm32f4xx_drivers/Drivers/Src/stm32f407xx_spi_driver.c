@@ -206,6 +206,49 @@ void SPI_ReceiveData(SPI_RegDef_t *pSPIx, uint8_t *pRxBuffer, uint32_t Len)
 		}
 	}
 }
+/**
+ * @fn uint8_t SPI_SendDataIT(SPI_Handle_t*, uint8_t*, uint32_t)
+ * @brief This API doesn't send anything, it just saves the pointers, length info and other data and just
+ * activates the TXEIE interrupt and return. So it's a non-blocking API
+ *
+ * @param pSPIHandle
+ * @param pTxBuffer
+ * @param Len
+ */
+uint8_t SPI_SendDataIT(SPI_Handle_t *pSPIHandle, uint8_t *pTxBuffer, uint32_t Len)
+{
+	uint8_t state = pSPIHandle->TxState;
+
+	if(state != SPI_BUSY_IN_TX)
+	{
+		// 1. Save the Tx buffer address and Len information in some global variables
+		pSPIHandle->pTxBuffer = pTxBuffer;
+		pSPIHandle->TxLen = Len;
+
+		/* 2. Mark the SPI state as busy in transmission so that no other code can
+		 * take over same SPI peripheral until transmission is over */
+		pSPIHandle->TxState = SPI_BUSY_IN_TX;
+
+		// 3. Enable the TXEIE control bit to get interrupt whenever TXE flag is set in SR
+		pSPIHandle->pSPIx->CR2 |= (1 << SPI_CR2_TXEIE);
+
+		// 4. Data Transmission will be handled by the ISR code (will implemented later)
+	}
+
+	return state;
+}
+/**
+ * @fn uint8_t SPI_ReceiveDataIT(SPI_Handle_t*, uint8_t*, uint32_t)
+ * @brief
+ *
+ * @param pSPIHandle
+ * @param pRxBuffer
+ * @param Len
+ */
+uint8_t SPI_ReceiveDataIT(SPI_Handle_t *pSPIHandle, uint8_t *pRxBuffer, uint32_t Len)
+{
+
+}
 
 /* IRQ Configuration and ISR handling | IRQ - Interrupt ReQuest, ISR - Interrupt Status Register */
 /**
