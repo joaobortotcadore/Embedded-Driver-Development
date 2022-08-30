@@ -8,12 +8,14 @@
 #ifndef INC_STM32F407XX_H_
 #define INC_STM32F407XX_H_
 
+#include <stddef.h> //for NULL
 #include <stdint.h> //for uint32_t typedef
 
 /* Volatile is used to inform the compiler that the variable value can be
  * changed any time without any task given by the source code. Volatile is
  * usually applied to a variable when we are declaring it. */
 #define __vo volatile
+#define __weak __attribute__((weak))
 
 /****************** START: Processor Specific Details *******************/
 
