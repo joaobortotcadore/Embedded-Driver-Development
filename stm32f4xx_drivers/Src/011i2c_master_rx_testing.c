@@ -126,7 +126,6 @@ int main(void)
 		commandcode = 0x52;
 		I2C_MasterSendData(&I2C1Handle,&commandcode,1,SLAVE_ADDR,I2C_ENABLE_SR);
 
-
 		I2C_MasterReceiveData(&I2C1Handle,rcv_buf,len,SLAVE_ADDR,I2C_DISABLE_SR);
 
 		rcv_buf[len+1] = '\0';

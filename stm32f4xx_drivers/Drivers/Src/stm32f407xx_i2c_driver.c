@@ -235,9 +235,11 @@ void I2C_MasterReceiveData(I2C_Handle_t *pI2CHandle,uint8_t *pRxBuffer, uint8_t 
         //wait until  RXNE becomes 1
         while(! I2C_GetFlagStatus(pI2CHandle->pI2Cx,I2C_FLAG_RXNE) );
 
-        //generate STOP condition
+        //generate STOP condition - section 60, lesson 210
         if(Sr == I2C_DISABLE_SR )
+        {
             I2C_GenerateStopCondition(pI2CHandle->pI2Cx);
+        }
 
         //read data in to buffer
         *pRxBuffer = pI2CHandle->pI2Cx->DR;
