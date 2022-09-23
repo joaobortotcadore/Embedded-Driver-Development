@@ -206,6 +206,19 @@ void I2C_MasterSendData(I2C_Handle_t *pI2CHandle,uint8_t *pTxbuffer, uint32_t Le
 	}
 }
 
+void I2C_PeripheralControl(I2C_RegDef_t *pI2Cx, uint8_t EnOrDi)
+{
+    if(EnOrDi == ENABLE)
+    {
+        pI2Cx->CR1 |= (1 << I2C_CR1_PE);
+        //pI2cBaseAddress->CR1 |= I2C_CR1_PE_Bit_Mask;
+    }else
+    {
+        pI2Cx->CR1 &= ~(1 << 0);
+    }
+
+}
+
 /**
  * @fn uint8_t I2C_GetFlagStatus(I2C_RegDef_t*, uint32_t)
  * @brief
