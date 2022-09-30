@@ -372,6 +372,8 @@ typedef struct
 #define IRQ_NO_SPI2         36
 #define IRQ_NO_SPI3         51
 #define IRQ_NO_EXTI15_10	40
+#define IRQ_NO_I2C1_EV      31  //section 61, lecture 216
+#define IRQ_NO_I2C1_ER      32  //section 61, lecture 216
 
 #define NVIC_IRQ_PRIO0      0
 #define NVIC_IRQ_PRIO1      1
