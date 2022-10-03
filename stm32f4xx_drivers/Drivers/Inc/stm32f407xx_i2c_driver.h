@@ -116,8 +116,8 @@ uint8_t I2C_MasterReceiveDataIT(I2C_Handle_t *pI2CHandle,uint8_t *pRxBuffer, uin
 void I2C_CloseReceiveData(I2C_Handle_t *pI2CHandle); //section 63, lecture 226
 void I2C_CloseSendData(I2C_Handle_t *pI2CHandle); //section 63, lecture 226
 
-//void I2C_SlaveSendData(I2C_RegDef_t *pI2C,uint8_t data);
-//uint8_t I2C_SlaveReceiveData(I2C_RegDef_t *pI2C);
+void I2C_SlaveSendData(I2C_RegDef_t *pI2C,uint8_t data); //section 65, lecture 230
+uint8_t I2C_SlaveReceiveData(I2C_RegDef_t *pI2C); //section 65, lecture 230
 
 /*
  * IRQ Configuration and ISR handling
