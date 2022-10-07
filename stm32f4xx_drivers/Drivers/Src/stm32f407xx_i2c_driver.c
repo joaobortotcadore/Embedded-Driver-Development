@@ -3,6 +3,47 @@
  *
  *  Created on: 16 de set de 2022
  *      Author: joaobortotcadore
+
+ *      >>>>>>>>>>>>>>>>>>>>>>>> Common problems in I2C <<<<<<<<<<<<<<<<<<<<<<<<
+ *      -----------------------------------------------------------------------
+ *      Problem-1: SDA and SCL line not held HIGH
+ *      Voltage after 12C pin initialization
+ *
+ *      Reason-1
+ *      Not activating the pullup resistors if you are using the internal
+ *      pull up resistor of an I/O line
+ *
+ *      Debug Tip:
+ *      worth checking the configuration register of arn 1/O line to see
+ *      whether the pullups are really activated or no, best way is to
+ *      dump the register contents.
+ *      -----------------------------------------------------------------------
+ *      Problem-2: ACK failure
+ *
+ *      Reason-1
+ *      Generating the address phase with wrong slave address
+ *
+ *      Debug Tip:
+ *      verify the slave address appearing on the SDA line by using
+ *      logic analyser
+ *
+ *      Reason-2:
+ *      Not enabling the ACKing feature in the 12C control register
+ *
+ *      Debug Tip:
+ *      Cross check the 120C Control register ACK enable field
+ *      -----------------------------------------------------------------------
+ *      Problem-3: Master is not producing the clock
+ *
+ *      Debug Tip 1:
+ *      First Check whether 12C peripheral clock is enabled and set to
+ *      at least 2mhz to produce standard mode i2c serial clock
+ *      frequency
+ *
+ *      Debug Tip 2:
+ *      Check whether GPIOs which you used for SCL and SDA
+ *      functionality are configured properly for the alternate functionality
+ *      -----------------------------------------------------------------------
  */
 
 #include "stm32f407xx_i2c_driver.h"
@@ -98,7 +139,7 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
     pI2CHandle->pI2Cx->CR2 =  (tempreg & 0x3F);
 
    //program the device own address
-    tempreg = 0;
+    tempreg = 0; // to avoid the master receive NACK in the adress phase - section 66, lecture 235
     tempreg |= pI2CHandle->I2C_Config.I2C_DeviceAddress << 1;
     tempreg |= ( 1 << 14);
     pI2CHandle->pI2Cx->OAR1 = tempreg;
@@ -487,8 +528,82 @@ void I2C_EV_IRQHandling(I2C_Handle_t *pI2CHandle)
         }
     }
 }
-void I2C_ER_IRQHandling(I2C_Handle_t *pI2CHandle)
+
+void I2C_ER_IRQHandling(I2C_Handle_t *pI2CHandle) // section 65, lesson 232
 {
+
+    uint32_t temp1,temp2;
+
+    //Know the status of  ITERREN control bit in the CR2
+    temp2 = (pI2CHandle->pI2Cx->CR2) & ( 1 << I2C_CR2_ITERREN);
+
+
+/* Check for Bus error */
+    temp1 = (pI2CHandle->pI2Cx->SR1) & ( 1<< I2C_SR1_BERR);
+    if(temp1  && temp2 )
+    {
+        //This is Bus error
+
+        //Implement the code to clear the buss error flag
+        pI2CHandle->pI2Cx->SR1 &= ~( 1 << I2C_SR1_BERR);
+
+        //Implement the code to notify the application about the error
+       I2C_ApplicationEventCallback(pI2CHandle,I2C_ERROR_BERR);
+    }
+
+/* Check for arbitration lost error */
+    temp1 = (pI2CHandle->pI2Cx->SR1) & ( 1 << I2C_SR1_ARLO );
+    if(temp1  && temp2)
+    {
+        //This is arbitration lost error
+
+        //Implement the code to clear the arbitration lost error flag
+        pI2CHandle->pI2Cx->SR1 &= ~( 1 << I2C_SR1_ARLO);
+
+        //Implement the code to notify the application about the error
+        I2C_ApplicationEventCallback(pI2CHandle,I2C_ERROR_ARLO);
+
+    }
+
+/* Check for ACK failure  error */
+
+    temp1 = (pI2CHandle->pI2Cx->SR1) & ( 1 << I2C_SR1_AF);
+    if(temp1  && temp2)
+    {
+        //This is ACK failure error
+
+        //Implement the code to clear the ACK failure error flag
+        pI2CHandle->pI2Cx->SR1 &= ~( 1 << I2C_SR1_AF);
+
+        //Implement the code to notify the application about the error
+        I2C_ApplicationEventCallback(pI2CHandle,I2C_ERROR_AF);
+    }
+
+/* Check for Overrun/underrun error */
+    temp1 = (pI2CHandle->pI2Cx->SR1) & ( 1 << I2C_SR1_OVR);
+    if(temp1  && temp2)
+    {
+        //This is Overrun/underrun
+
+        //Implement the code to clear the Overrun/underrun error flag
+        pI2CHandle->pI2Cx->SR1 &= ~( 1 << I2C_SR1_OVR);
+
+        //Implement the code to notify the application about the error
+        I2C_ApplicationEventCallback(pI2CHandle,I2C_ERROR_OVR);
+    }
+
+/* Check for Time out error */
+    temp1 = (pI2CHandle->pI2Cx->SR1) & ( 1 << I2C_SR1_TIMEOUT);
+    if(temp1  && temp2)
+    {
+        //This is Time out error
+
+        //Implement the code to clear the Time out error flag
+        pI2CHandle->pI2Cx->SR1 &= ~( 1 << I2C_SR1_TIMEOUT);
+
+        //Implement the code to notify the application about the error
+        I2C_ApplicationEventCallback(pI2CHandle,I2C_ERROR_TIMEOUT);
+    }
 
 }
 
@@ -569,10 +684,36 @@ void I2C_CloseSendData(I2C_Handle_t *pI2CHandle) //section 63, lecture 226
     pI2CHandle->TxLen = 0;
 }
 
-void I2C_GenerateStopCondition(I2C_RegDef_t *pI2Cx)
+void I2C_SlaveSendData(I2C_RegDef_t *pI2C,uint8_t data)
+{
+    pI2C->DR = data;
+}
+
+uint8_t I2C_SlaveReceiveData(I2C_RegDef_t *pI2C) //section 66, lesson 235
+{
+    return (uint8_t) pI2C->DR;
+}
+
+void I2C_GenerateStopCondition(I2C_RegDef_t *pI2Cx) //section 66, lesson 235
 {
     pI2Cx->CR1 |= ( 1 << I2C_CR1_STOP);
 }
+
+void I2C_SlaveEnableDisableCallbackEvents(I2C_RegDef_t *pI2Cx,uint8_t EnorDi) //section 66, lecture 234
+{
+    if(EnorDi == ENABLE)
+    {
+           pI2Cx->CR2 |= ( 1 << I2C_CR2_ITEVTEN);
+           pI2Cx->CR2 |= ( 1 << I2C_CR2_ITBUFEN);
+           pI2Cx->CR2 |= ( 1 << I2C_CR2_ITERREN);
+    }else
+    {
+           pI2Cx->CR2 &= ~( 1 << I2C_CR2_ITEVTEN);
+           pI2Cx->CR2 &= ~( 1 << I2C_CR2_ITBUFEN);
+           pI2Cx->CR2 &= ~( 1 << I2C_CR2_ITERREN);
+    }
+}
+
 /* IMPLEMENTATION OF STATIC / PRIVATE FUNCTIONS */
 /**
  * @fn void I2C_GenerateStartCondition(I2C_RegDef_t*)
