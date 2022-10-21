@@ -303,7 +303,7 @@ typedef struct
 #define USART1_PCLK_EN()      ( RCC->APB2ENR |= (1 << 4) )
 #define USART2_PCLK_EN()      ( RCC->APB1ENR |= (1 << 17) )
 #define USART3_PCLK_EN()      ( RCC->APB1ENR |= (1 << 18) )
-#define USART4_PCLK_EN()      ( RCC->APB1ENR |= (1 << 19) )
+#define UART4_PCLK_EN()      ( RCC->APB1ENR |= (1 << 19) )
 #define USART5_PCLK_EN()      ( RCC->APB1ENR |= (1 << 20) )
 #define USART6_PCLK_EN()      ( RCC->APB1ENR |= (1 << 5) )
 
@@ -340,7 +340,7 @@ typedef struct
 #define USART3_PCLK_DI()      ( RCC->APB1ENR &= ~(1 << 18) )
 #define USART4_PCLK_DI()      ( RCC->APB1ENR &= ~(1 << 19) )
 #define USART5_PCLK_DI()      ( RCC->APB1ENR &= ~(1 << 20) )
-#define USART6_PCLK_DI()      ( RCC->APB2ENR &= ~(1 << 5) )
+#define USART6_PCLK_DI()      ( RCC->APB1ENR &= ~(1 << 5) )
 
 /* Clock Disable Macros for SYSCFG peripheral */
 #define SYSCFG_PCLK_DI()	( RCC->APB2ENR &= ~(1<<14) )

@@ -5,16 +5,12 @@
  *      Author: admin
  */
 
-
 #include "stm32f407xx_rcc_driver.h"
 
+uint16_t AHB_PreScaler[8] = {2,4,8,16,64,128,256,512}; //section 72, lecture 257
+uint8_t APB1_PreScaler[4] = { 2, 4 , 8, 16}; //section 72, lecture 257
 
-uint16_t AHB_PreScaler[8] = {2,4,8,16,64,128,256,512};
-uint8_t APB1_PreScaler[4] = { 2, 4 , 8, 16};
-
-
-
-uint32_t RCC_GetPCLK1Value(void)
+uint32_t RCC_GetPCLK1Value(void) //section 72, lecture 257
 {
 	uint32_t pclk1,SystemClk;
 
@@ -44,8 +40,6 @@ uint32_t RCC_GetPCLK1Value(void)
 		ahbp = AHB_PreScaler[temp-8];
 	}
 
-
-
 	//apb1
 	temp = ((RCC->CFGR >> 10 ) & 0x7);
 
@@ -62,8 +56,6 @@ uint32_t RCC_GetPCLK1Value(void)
 	return pclk1;
 }
 
-
-
 /*********************************************************************
  * @fn      		  - RCC_GetPCLK2Value
  *
@@ -78,7 +70,7 @@ uint32_t RCC_GetPCLK1Value(void)
  * @Note              -
 
  */
-uint32_t RCC_GetPCLK2Value(void)
+uint32_t RCC_GetPCLK2Value(void) //section 72, lecture 257
 {
 	uint32_t SystemClock=0,tmp,pclk2;
 	uint8_t clk_src = ( RCC->CFGR >> 2) & 0X3;
@@ -118,7 +110,6 @@ uint32_t RCC_GetPCLK2Value(void)
 
 uint32_t  RCC_GetPLLOutputClock()
 {
-
 	return 0;
 }
 
