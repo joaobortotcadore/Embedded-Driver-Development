@@ -834,7 +834,7 @@ void USART_IRQHandling(USART_Handle_t *pUSARTHandle)
 
     //Implement the code to check the state of CTSIE bit in CR3 (This bit is not available for UART4 & UART5.)
     temp3 = pUSARTHandle->pUSARTx->CR3 & (1 << USART_CR3_CTSIE);
-
+    (void)temp3; // to prevent warning unused variable
     if (temp1 && temp2)
     {
         //Implement the code to clear the CTS flag in SR
