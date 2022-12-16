@@ -12,7 +12,7 @@ uint8_t APB1_PreScaler[4] = { 2, 4 , 8, 16}; //section 72, lecture 257
 
 uint32_t RCC_GetPCLK1Value(void) //section 72, lecture 257
 {
-	uint32_t pclk1,SystemClk;
+	uint32_t pclk1,SystemClk=0;
 
 	uint8_t clksrc,temp,ahbp,apb1p;
 
